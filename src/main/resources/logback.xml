@@ -14,5 +14,5 @@
         <appender-ref ref="stdout" />
     </root>
 
-    <logger name="com.hellozjf.test.roboticrover" level="DEBUG" />
+    <logger name="com.hellozjf.test.roboticrover" level="INFO" />
 </configuration>

@@ -44,12 +44,17 @@ public class RoboticRover {
 
     private void move() {
 
-        // 获取漫游车移动后的坐标
-        int nextX = place.getX() + (int) Math.cos(place.getAngle());
-        int nextY = place.getY() + (int) Math.sin(place.getAngle());
+        // 获取x和y的增量
+        double addX = Math.cos(Math.toRadians(place.getAngle()));
+        double addY = Math.sin(Math.toRadians(place.getAngle()));
 
-        log.debug("angle = {}, cos = {}, sin = {}", place.getAngle(), Math.cos(place.getAngle()), Math.sin(place.getAngle()));
-        log.debug("nextX = {}, nextY = {}", nextX, nextY);
+//        log.debug("addX = {}, addY = {}", addX, addY);
+
+        // 获取漫游车移动后的坐标
+        int nextX = place.getX() + (int) addX;
+        int nextY = place.getY() + (int) addY;
+
+//        log.debug("nextX = {}, nextY = {}", nextX, nextY);
 
         // 更新漫游车坐标
         place.setX(nextX);

@@ -16,7 +16,7 @@ public class ConverterUtils {
      * @param direction 方向
      * @return 角度
      */
-    public static Double getAngleByDirection(String direction) {
+    public static Integer getAngleByDirection(String direction) {
         if (direction.equalsIgnoreCase(DirectionEnum.EAST.getCode())) {
             return AngleEnum.EAST.getCode();
         } else if (direction.equalsIgnoreCase(DirectionEnum.NORTH.getCode())) {
@@ -36,14 +36,18 @@ public class ConverterUtils {
      * @param angle 角度
      * @return 方向
      */
-    public static String getDirectionByAngle(Double angle) {
-        if (angle % AngleEnum.CIRCLE.getCode() == AngleEnum.EAST.getCode()) {
+    public static String getDirectionByAngle(Integer angle) {
+        Integer ang = angle % AngleEnum.CIRCLE.getCode();
+        if (ang < 0) {
+            ang += AngleEnum.CIRCLE.getCode();
+        }
+        if (ang.equals(AngleEnum.EAST.getCode())) {
             return DirectionEnum.EAST.getCode();
-        } else if (angle % AngleEnum.CIRCLE.getCode() == AngleEnum.NORTH.getCode()) {
+        } else if (ang.equals(AngleEnum.NORTH.getCode())) {
             return DirectionEnum.NORTH.getCode();
-        } else if (angle % AngleEnum.CIRCLE.getCode() == AngleEnum.WEST.getCode()) {
+        } else if (ang.equals(AngleEnum.WEST.getCode())) {
             return DirectionEnum.WEST.getCode();
-        } else if (angle % AngleEnum.CIRCLE.getCode() == AngleEnum.SOUTH.getCode()) {
+        } else if (ang.equals(AngleEnum.SOUTH.getCode())) {
             return DirectionEnum.SOUTH.getCode();
         } else {
             throw new RoboticRoverException(ErrorEnum.UNKNOWN_DIRECTION.getCode(),

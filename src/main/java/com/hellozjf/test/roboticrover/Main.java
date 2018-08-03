@@ -3,6 +3,7 @@ package com.hellozjf.test.roboticrover;
 import com.hellozjf.test.roboticrover.domainobject.Platform;
 import com.hellozjf.test.roboticrover.domainobject.RoboticRover;
 import com.hellozjf.test.roboticrover.util.InputUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Scanner;
 
@@ -11,6 +12,7 @@ import java.util.Scanner;
  *
  * @author hellozjf
  */
+@Slf4j
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -29,7 +31,7 @@ public class Main {
             // 获取巡逻车的命令
             String commands = scanner.nextLine();
 
-            System.out.println(platform.doCommands(roboticRover, commands));
+            log.info("{}", platform.doCommands(roboticRover, commands));
         }
     }
 }

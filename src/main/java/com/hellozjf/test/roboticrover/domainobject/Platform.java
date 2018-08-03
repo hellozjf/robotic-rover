@@ -59,7 +59,7 @@ public class Platform {
 
             String command = commands.substring(i, i + 1);
             if (command.equalsIgnoreCase(CommandEnum.MOVE.getCode()) &&
-                    ripPlaceList.indexOf(command) != -1) {
+                    ripPlaceList.indexOf(roboticRover.getPlace()) != -1) {
                 // 说明之前有巡逻车在这个位置掉落过，那么应该忽略这个命令
                 continue;
             }
@@ -80,6 +80,7 @@ public class Platform {
                 // 返回掉落信息
                 String ret = place.getDirectionInfo() + " RIP";
                 log.debug("command = {}, place = {}", command, ret);
+                return ret;
             }
 
             log.debug("command = {}, place = {}", command, roboticRover.getPlace().getDirectionInfo());
