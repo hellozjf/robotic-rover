@@ -1,13 +1,11 @@
 package com.hellozjf.test.roboticrover.exception;
 
 import com.hellozjf.test.roboticrover.constant.ErrorEnum;
-import lombok.Getter;
 
 /**
  * 巡逻车异常
  * @author hellozjf
  */
-@Getter
 public class RoboticRoverException extends RuntimeException {
     private Integer code;
 
@@ -19,5 +17,9 @@ public class RoboticRoverException extends RuntimeException {
     public RoboticRoverException(ErrorEnum errorEnum) {
         super(errorEnum.getDescription());
         this.code = errorEnum.getCode();
+    }
+
+    public Integer getCode() {
+        return code;
     }
 }

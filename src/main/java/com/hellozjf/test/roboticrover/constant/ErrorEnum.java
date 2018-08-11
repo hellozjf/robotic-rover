@@ -1,11 +1,8 @@
 package com.hellozjf.test.roboticrover.constant;
 
-import lombok.Getter;
-
 /**
  * @author hellozjf
  */
-@Getter
 public enum ErrorEnum {
     RIP(1, "小车掉落"),
     UNKNOWN_DIRECTION(2, "未知方向"),
@@ -18,5 +15,13 @@ public enum ErrorEnum {
     ErrorEnum(Integer code, String description) {
         this.code = code;
         this.description = description;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

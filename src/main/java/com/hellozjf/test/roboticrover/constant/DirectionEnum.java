@@ -1,12 +1,9 @@
 package com.hellozjf.test.roboticrover.constant;
 
-import lombok.Getter;
-
 /**
  * 机器人漫游车的方向
  * @author hellozjf
  */
-@Getter
 public enum DirectionEnum {
     NORTH("N", "北"),
     EAST("E", "东"),
@@ -19,5 +16,13 @@ public enum DirectionEnum {
     DirectionEnum(String code, String description) {
         this.code = code;
         this.description = description;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

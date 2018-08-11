@@ -1,8 +1,10 @@
 package com.hellozjf.test.roboticrover.domainobject;
 
 import com.hellozjf.test.roboticrover.constant.CommandEnum;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import com.hellozjf.test.roboticrover.constant.ErrorEnum;
+import com.hellozjf.test.roboticrover.exception.RoboticRoverException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +13,9 @@ import java.util.List;
  * 平台对象，它将控制漫游车进行各种操作
  * @author hellozjf
  */
-@Data
-@Slf4j
 public class Platform {
+
+    private static final Logger log = LoggerFactory.getLogger(Platform.class);
 
     /**
      * 平台最小X坐标
@@ -42,10 +44,25 @@ public class Platform {
         this.maxY = maxY;
     }
 
+    public Platform(String platformRightTopPosition) {
+        String[] platformSplits = platformRightTopPosition.split(" ");
+        if (platformSplits.length != 2) {
+            throw new RoboticRoverException(ErrorEnum.INPUT_ERROR.getCode(),
+                    ErrorEnum.INPUT_ERROR.getDescription() + ":" + platformRightTopPosition);
+        }
+        Integer platformX = Integer.valueOf(platformSplits[0]);
+        Integer platformY = Integer.valueOf(platformSplits[1]);
+
+        this.minX = 0;
+        this.minY = 0;
+        this.maxX = platformX;
+        this.maxY = platformY;
+    }
+
     /**
-     * 记录漫游车掉落点的位置信息
+     * 记录掉落的漫游车
      */
-    private List<Place> ripPlaceList = new ArrayList<>();
+    private List<RoboticRover> ripRoboticRoverList = new ArrayList<RoboticRover>();
 
     /**
      * 使漫游车在平台内按照指令行动
@@ -53,61 +70,87 @@ public class Platform {
      * @param commands
      */
     public String doCommands(RoboticRover roboticRover, String commands) {
-        log.debug("init place = {}", roboticRover.getPlace().getDirectionInfo());
+        log.debug("init x = {}, y = {}, direction = {}",
+                roboticRover.getX(),
+                roboticRover.getY(),
+                roboticRover.getDirection());
         // 让巡逻车开始巡逻
         for (int i = 0; i < commands.length(); i++) {
 
             String command = commands.substring(i, i + 1);
             if (command.equalsIgnoreCase(CommandEnum.MOVE.getCode()) &&
-                    ripPlaceList.indexOf(roboticRover.getPlace()) != -1) {
+                    willRoboticRoverFall(roboticRover)) {
                 // 说明之前有巡逻车在这个位置掉落过，那么应该忽略这个命令
                 continue;
             }
             roboticRover.command(command);
 
             // 判断巡逻车有没有越过边界
-            int roboticRoverX = roboticRover.getPlace().getX();
-            int roboticRoverY = roboticRover.getPlace().getY();
+            int roboticRoverX = roboticRover.getX();
+            int roboticRoverY = roboticRover.getY();
             if (roboticRoverX < minX || roboticRoverX > maxX ||
                     roboticRoverY < minY || roboticRoverY > maxY) {
 
-                // 获取巡逻车掉落前的位置和方向
-                Place place = getFallPlace(roboticRover);
-
-                // 记下该位置
-                ripPlaceList.add(place);
+                // 记下这辆掉落的巡逻车
+                ripRoboticRoverList.add(roboticRover);
 
                 // 返回掉落信息
-                String ret = place.getDirectionInfo() + " RIP";
-                log.debug("command = {}, place = {}", command, ret);
+                String ret = roboticRover.getPreviousXYAndDirection() + " RIP";
+                log.debug("command = {}, ret = {}", command, ret);
                 return ret;
             }
 
-            log.debug("command = {}, place = {}", command, roboticRover.getPlace().getDirectionInfo());
+            log.debug("command = {}, ret = {}", command, roboticRover.getXYAndDirection());
         }
 
-        return roboticRover.getPlace().getDirectionInfo();
+        return roboticRover.getXYAndDirection();
     }
 
     /**
-     * 让巡逻车回到掉落前的位置
+     * 从已掉落的巡逻车的上一次位置和方向信息，来判断这次要执行MOVE命令的巡逻车会不会重蹈覆辙
      * @param roboticRover
+     * @return
      */
-    private Place getFallPlace(RoboticRover roboticRover) {
-        int x = roboticRover.getPlace().getX();
-        int y = roboticRover.getPlace().getY();
-        if (x < minX) {
-            x = minX;
-        } else if (x > maxX) {
-            x = maxX;
-        } else if (y < minY) {
-            y = minY;
-        } else if (y > maxY) {
-            y = maxY;
+    private boolean willRoboticRoverFall(RoboticRover roboticRover) {
+        for (RoboticRover ripRoboticRover : ripRoboticRoverList) {
+            if (ripRoboticRover.getPreviousX().equals(roboticRover.getX()) &&
+                    ripRoboticRover.getPreviousY().equals(roboticRover.getY()) &&
+                    ripRoboticRover.getDirection().equals(roboticRover.getDirection())) {
+                return true;
+            }
         }
+        return false;
+    }
 
-        // 返回掉落前的位置和方向
-        Place place = new Place(x, y, roboticRover.getPlace().getAngle());
-        return place;
+    public Integer getMinX() {
+        return minX;
+    }
+
+    public void setMinX(Integer minX) {
+        this.minX = minX;
+    }
+
+    public Integer getMinY() {
+        return minY;
+    }
+
+    public void setMinY(Integer minY) {
+        this.minY = minY;
+    }
+
+    public Integer getMaxX() {
+        return maxX;
+    }
+
+    public void setMaxX(Integer maxX) {
+        this.maxX = maxX;
+    }
+
+    public Integer getMaxY() {
+        return maxY;
+    }
+
+    public void setMaxY(Integer maxY) {
+        this.maxY = maxY;
     }
 }
