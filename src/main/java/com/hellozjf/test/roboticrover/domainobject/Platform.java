@@ -78,7 +78,7 @@ public class Platform {
         for (int i = 0; i < commands.length(); i++) {
 
             String command = commands.substring(i, i + 1);
-            if (command.equalsIgnoreCase(CommandEnum.MOVE.getCode()) &&
+            if (command.equals(CommandEnum.MOVE.getCode()) &&
                     willRoboticRoverFall(roboticRover)) {
                 // 说明之前有巡逻车在这个位置掉落过，那么应该忽略这个命令
                 continue;

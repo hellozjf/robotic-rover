@@ -45,7 +45,7 @@ public class RoboticRover {
 
     public RoboticRover(String roboticRoverPosition) {
 
-        // 输入的字符串为
+        // 输入的字符串为"x y direction"，其中direction只能为N/S/W/E
         String[] roboticRoverSplits = roboticRoverPosition.split(" ");
         if (roboticRoverSplits.length != 3) {
             throw new RoboticRoverException(ErrorEnum.INPUT_ERROR.getCode(),
@@ -69,12 +69,11 @@ public class RoboticRover {
      * @param cmd
      */
     public void command(String cmd) {
-        if (cmd.equalsIgnoreCase(CommandEnum.MOVE.getCode())) {
+        if (cmd.equals(CommandEnum.MOVE.getCode())) {
             move();
-        } else if (cmd.equalsIgnoreCase(CommandEnum.LEFT.getCode())) {
-            turnLeft();
-        } else if (cmd.equalsIgnoreCase(CommandEnum.RIGHT.getCode())) {
-            turnRight();
+        } else if (cmd.equals(CommandEnum.LEFT.getCode()) ||
+                cmd.equals(CommandEnum.RIGHT.getCode())) {
+            turn(cmd);
         } else {
             throw new RoboticRoverException(ErrorEnum.UNKNOWN_COMMOAND.getCode(),
                     ErrorEnum.UNKNOWN_COMMOAND + ":" + cmd);
@@ -102,33 +101,60 @@ public class RoboticRover {
         }
     }
 
-    private void turnLeft() {
-        if (direction.equals(DirectionEnum.NORTH.getCode())) {
-            direction = DirectionEnum.WEST.getCode();
-        } else if (direction.equals(DirectionEnum.SOUTH.getCode())) {
-            direction = DirectionEnum.EAST.getCode();
-        } else if (direction.equals(DirectionEnum.WEST.getCode())) {
-            direction = DirectionEnum.SOUTH.getCode();
-        } else if (direction.equals(DirectionEnum.EAST.getCode())) {
-            direction = DirectionEnum.NORTH.getCode();
-        } else {
+    /**
+     * 传入L或R，使巡逻车改变方向
+     * @param cmd L或R
+     */
+    private void turn(String cmd) {
+
+        // cmd只能是L或者R，否则抛出异常
+        if (! (cmd.equals(CommandEnum.LEFT.getCode()) ||
+                cmd.equals(CommandEnum.RIGHT.getCode()))) {
+            throw new RoboticRoverException(ErrorEnum.UNKNOWN_COMMOAND.getCode(),
+                    ErrorEnum.UNKNOWN_COMMOAND.getDescription() + ":" + cmd);
+        }
+
+        // 方向只能是N, W, S, E四个中的一个，否则抛出异常
+        if (! (direction.equals(DirectionEnum.NORTH.getCode()) ||
+                direction.equals(DirectionEnum.WEST.getCode()) ||
+                direction.equals(DirectionEnum.SOUTH.getCode()) ||
+                direction.equals(DirectionEnum.EAST.getCode()))) {
             throw new RoboticRoverException(ErrorEnum.UNKNOWN_DIRECTION.getCode(),
                     ErrorEnum.UNKNOWN_COMMOAND.getDescription() + ":" + direction);
         }
-    }
 
-    private void turnRight() {
         if (direction.equals(DirectionEnum.NORTH.getCode())) {
-            direction = DirectionEnum.EAST.getCode();
+            if (cmd.equals(CommandEnum.LEFT.getCode())) {
+                // 北左转是西
+                direction = DirectionEnum.WEST.getCode();
+            } else {
+                // 北右转是东
+                direction = DirectionEnum.EAST.getCode();
+            }
         } else if (direction.equals(DirectionEnum.SOUTH.getCode())) {
-            direction = DirectionEnum.WEST.getCode();
+            if (cmd.equals(CommandEnum.LEFT.getCode())) {
+                // 南左转是东
+                direction = DirectionEnum.EAST.getCode();
+            } else {
+                // 南右转是西
+                direction = DirectionEnum.WEST.getCode();
+            }
         } else if (direction.equals(DirectionEnum.WEST.getCode())) {
-            direction = DirectionEnum.NORTH.getCode();
-        } else if (direction.equals(DirectionEnum.EAST.getCode())) {
-            direction = DirectionEnum.SOUTH.getCode();
+            if (cmd.equals(CommandEnum.LEFT.getCode())) {
+                // 西左转是南
+                direction = DirectionEnum.SOUTH.getCode();
+            } else {
+                // 西右转是北
+                direction = DirectionEnum.NORTH.getCode();
+            }
         } else {
-            throw new RoboticRoverException(ErrorEnum.UNKNOWN_DIRECTION.getCode(),
-                    ErrorEnum.UNKNOWN_COMMOAND.getDescription() + ":" + direction);
+            if (cmd.equals(CommandEnum.LEFT.getCode())) {
+                // 东左转是北
+                direction = DirectionEnum.NORTH.getCode();
+            } else {
+                // 东右转是南
+                direction = DirectionEnum.SOUTH.getCode();
+            }
         }
     }
 
