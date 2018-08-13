@@ -120,7 +120,7 @@ public class RoboticRover {
                 direction.equals(DirectionEnum.SOUTH.getCode()) ||
                 direction.equals(DirectionEnum.EAST.getCode()))) {
             throw new RoboticRoverException(ErrorEnum.UNKNOWN_DIRECTION.getCode(),
-                    ErrorEnum.UNKNOWN_COMMOAND.getDescription() + ":" + direction);
+                    ErrorEnum.UNKNOWN_DIRECTION.getDescription() + ":" + direction);
         }
 
         if (direction.equals(DirectionEnum.NORTH.getCode())) {
